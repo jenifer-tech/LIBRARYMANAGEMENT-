@@ -91,8 +91,7 @@ def book():
         q = insert_val(q,new_status)    
 
         if check_word(q) != check_lword(q) :
-            q=q + ")"
-            #return q            
+            q=q + ")"                      
             res=b.execute(q)
             a.commit()
             return jsonify({"message":"Book  added successfully!"}),200 
@@ -263,8 +262,8 @@ def hist_user():
         new_uid=request.form.get('u_id') 
         new_uname=request.form.get('u_name')   
         new_doi=request.form.get('doi')
-        sql = "select a.u_id,a.u_name,b.b_id,b.doi from user a inner join transaction b on a.u_id=%s = b.u_id=%s"        
-        b.execute(sql,(new_uid,new_uid,))
+        sql = "select a.u_id,a.u_name,b.b_id,b.doi,c.b_name from ((user a inner join transaction b on a.u_id = b.u_id)inner join  book c on c.b_id=b.b_id) where a.u_id=%s"        
+        b.execute(sql,(new_uid,))
         result = b.fetchall()
         return jsonify(result),200
 @app.route("/bookhistory",methods=["POST","GET","PUT"])  
@@ -275,8 +274,8 @@ def hist_book():
         new_uid=request.form.get('u_id') 
         new_uname=request.form.get('u_name')   
         new_doi=request.form.get('doi')
-        sq = "select * from book a inner join transaction b on a.b_id=%s = b.b_id=%s" 
-        b.execute(sq,(new_id,new_id,))
+        sq = "select a.b_name,a.b_author,b.u_id,c.u_name from ((book a inner join transaction b on a.b_id = b.b_id) inner join user c on b.u_id=c.u_id) where a.b_id=%s" 
+        b.execute(sq,(new_id))
         result = b.fetchall()
         return jsonify(result),200
          
